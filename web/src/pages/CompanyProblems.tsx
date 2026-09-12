@@ -14,6 +14,10 @@ import {
 
 import { supabase } from "~/supabase/supabaseClient";
 import {
+  fetchCompanyProblems,
+  getCompanyById,
+} from "~/lib/localData";
+import {
   ArrowUpRight,
   CheckCircle2,
   Building2,
@@ -70,42 +74,7 @@ const DIFFICULTY_STYLES: Record<string, string> = {
 /* ------------------------------------------------------ */
 /*                         Helpers                        */
 /* ------------------------------------------------------ */
-async function fetchAllCompanyProblems(companyId: number) {
-  const PAGE_SIZE = 4000;
-  let from = 0;
-  const allRows: any[] = [];
-
-  while (true) {
-    const { data, error } = await supabase
-      .from("company_problems")
-      .select(
-        `
-        timeframe_tag,
-        problem:problems (
-          id,
-          title,
-          url,
-          difficulty,
-          acceptance,
-          frequency,
-          problem_tags ( tag ),
-          company_problems (
-            company:companies ( id, name )
-          )
-        )
-      `,
-      )
-      .eq("company_id", companyId)
-      .range(from, from + PAGE_SIZE - 1);
-
-    if (error || !data) break;
-    allRows.push(...data);
-    if (data.length < PAGE_SIZE) break;
-    from += PAGE_SIZE;
-  }
-
-  return allRows;
-}
+// fetchCompanyProblems and getCompanyById are imported from ~/lib/localData
 
 /* ------------------------------------------------------ */
 /*                     Cell Renderers                     */
@@ -397,13 +366,9 @@ export default function CompanyProblems() {
       setLoading(true);
       setError(null);
 
-      const { data: companyData, error: companyErr } = await supabase
-        .from("companies")
-        .select("id, name")
-        .eq("id", companyId)
-        .single();
+      const companyData = await getCompanyById(companyId);
 
-      if (companyErr || !companyData) {
+      if (!companyData) {
         setError("Company not found.");
         setLoading(false);
         return;
@@ -411,7 +376,7 @@ export default function CompanyProblems() {
 
       setCompany(companyData);
 
-      const data = await fetchAllCompanyProblems(companyId);
+      const data = await fetchCompanyProblems(companyId);
       console.log("Fetched problems:", data);
 
       if (!data) {

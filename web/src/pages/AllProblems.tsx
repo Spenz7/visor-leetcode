@@ -12,6 +12,7 @@ import {
 } from "ag-grid-community";
 
 import { supabase } from "~/supabase/supabaseClient";
+import { fetchAllProblems } from "~/lib/localData";
 import { ArrowUpRight, CheckCircle2, EyeOff, Eye } from "lucide-react";
 import { useAppContext } from "~/context/useAppContext";
 import { Badge } from "~/components/ui/badge";
@@ -61,41 +62,7 @@ const DIFFICULTY_STYLES: Record<string, string> = {
 /* ─────────────────────────────────────────────────────────── */
 /* Helpers */
 /* ─────────────────────────────────────────────────────────── */
-async function fetchAllProblems() {
-  const PAGE_SIZE = 4000;
-  let from = 0;
-  const allRows: any[] = [];
-
-  while (true) {
-    const { data, error } = await supabase
-      .from("problems")
-      .select(
-        `
-          id,
-          title,
-          url,
-          difficulty,
-          acceptance,
-          frequency,
-          problem_tags ( tag ),
-          company_problems (
-            company:companies ( id, name ),
-            timeframe_tag
-          )
-        `,
-      )
-      .range(from, from + PAGE_SIZE - 1);
-
-    if (error || !data) break;
-
-    allRows.push(...data);
-
-    if (data.length < PAGE_SIZE) break;
-    from += PAGE_SIZE;
-  }
-
-  return allRows;
-}
+// fetchAllProblems is imported from ~/lib/localData
 
 /* ─────────────────────────────────────────────────────────── */
 /* Cell Renderers */

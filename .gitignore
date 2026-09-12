@@ -1,0 +1,17 @@
+# Data repos cloned locally — not tracked in this repo
+leetcode-company-wise-problems/
+leetcode-companywise-interview-questions/
+visor-leetcode (original)/
+
+# Generated data bundle
+web/public/data.json
+
+# Dependencies
+web/node_modules/
+
+# Build output
+web/dist/
+
+# Env files
+web/.env
+web/.env.local

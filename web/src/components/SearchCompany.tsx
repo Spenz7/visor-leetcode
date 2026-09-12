@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Field } from "./ui/field";
 import { Input } from "./ui/input";
-import { supabase } from "~/supabase/supabaseClient";
+import { searchCompanies } from "~/lib/localData";
 import { Building2 } from "lucide-react";
 import { Spinner } from "./ui/spinner";
 
@@ -43,32 +43,17 @@ export default function SearchCompany() {
 
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
-
-      const { data, error } = await supabase
-        .from("companies")
-        .select(
-          `
-          id,
-          name,
-          company_problems(count)
-        `,
-        )
-        .ilike("name", `%${query.trim()}%`)
-        .order("name")
-        .limit(8);
-
-      setLoading(false);
-
-      if (error || !data) return;
-
-      const mapped: CompanyResult[] = data.map((c: any) => ({
-        id: c.id,
-        name: c.name,
-        problem_count: c.company_problems[0]?.count ?? 0,
-      }));
-
-      setResults(mapped);
-      setOpen(true);
+      try {
+        const companies = await searchCompanies(query.trim());
+        setResults(companies);
+        setOpen(true);
+      } catch (err) {
+        console.error("[SearchCompany] failed to search:", err);
+        setResults([]);
+        setOpen(true);
+      } finally {
+        setLoading(false);
+      }
     }, 400);
 
     return () => {

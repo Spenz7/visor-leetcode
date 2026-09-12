@@ -5,6 +5,7 @@ import okeyFrieren from "~/assets/okey-frieren.png";
 import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
 import { supabase } from "~/supabase/supabaseClient";
+import { getStats } from "~/lib/localData";
 
 import { CompanyCarousel } from "~/components/CompanyCarousel";
 import { Badge } from "~/components/ui/badge";
@@ -58,30 +59,9 @@ export default function Home() {
         }
       }
 
-      const [companiesRes, problemsRes] = await Promise.all([
-        supabase.from("companies").select("*", { count: "exact", head: true }),
-        supabase.from("problems").select("*", { count: "exact", head: true }),
-        supabase
-          .from("problems")
-          .select("updated_at")
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .single(),
-      ]);
-
-      const data = {
-        companies: companiesRes.count ?? 0,
-        problems: problemsRes.count ?? 0,
-      };
-
-      const lastDbUpdateRes = await supabase
-        .from("app_metadata")
-        .select("last_db_update")
-        .eq("id", 1)
-        .single();
-
-      const lastDbUpdate = lastDbUpdateRes.data?.last_db_update ?? null;
-      console.log("Fetched stats:", data, "Last DB Update:", lastDbUpdate);
+      const data = await getStats();
+      const lastDbUpdate = null;
+      console.log("Fetched stats:", data);
 
       memoryCache = {
         ...data,
@@ -174,7 +154,7 @@ export default function Home() {
           </div>
 
           <Link
-            to={session ? "/all-problems" : "/sign-in?next=/all-problems"}
+            to="/all-problems"
             className="w-full"
           >
             {!session ? (
