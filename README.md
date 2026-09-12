@@ -21,12 +21,18 @@ Problem data is merged from three sources:
 
 ---
 
-## Local setup
+## First-time setup
 
-Run once from the repo root — clones the data repos, builds `data.json`, installs dependencies, and starts the dev server:
+Run these commands once from the repo root:
 
-```bash
-bash scripts/setup.sh
+```
+git clone https://github.com/liquidslr/leetcode-company-wise-problems.git
+git clone https://github.com/snehasishroy/leetcode-companywise-interview-questions.git
+node build-data.mjs
+node export-supabase.mjs
+cd web
+npm install
+npm run dev
 ```
 
 Open [http://localhost:5173/visor-leetcode/](http://localhost:5173/visor-leetcode/)
@@ -35,10 +41,25 @@ Open [http://localhost:5173/visor-leetcode/](http://localhost:5173/visor-leetcod
 
 ## Refreshing data
 
-When the CSV repos get new updates, pull and rebuild without restarting:
+When the CSV repos get new updates, run these from the repo root:
 
-```bash
-bash scripts/refresh.sh
+```
+git -C leetcode-company-wise-problems pull
+git -C leetcode-companywise-interview-questions pull
+node build-data.mjs
+node export-supabase.mjs
+```
+
+Then start (or restart) the dev server:
+
+```
+cd web && npm run dev
+```
+
+If your data is already up to date and you just want to start the app:
+
+```
+cd web && npm run dev
 ```
 
 ---

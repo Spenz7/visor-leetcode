@@ -14,7 +14,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = path.resolve(__dirname, "../web/public/data.json");
+const DATA_FILE = path.resolve(__dirname, "web/public/data.json");
 
 const SUPABASE_URL = "https://otnygskksrekalrjtwqj.supabase.co";
 const ANON_KEY = "sb_publishable_u2_Zj4oEiuJmzRKL9n4CAg_eIsJaTvO";
